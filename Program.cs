@@ -3,25 +3,30 @@ using System.Net;
 using System.Linq;
 using Newtonsoft.Json;
 using System.IO;
+using System.Security.Cryptography;
+using System.Text;
 
 namespace eDocSignature
 {
     class Program
     {
         static void Main(string[] args)
-        {       
-            string RIPADDRESS = "http://edocsign.com";
-            string ControlId = "Reed";
+        {
+            var RIPADDRESS = "http://edocsign.com";
+            var ControlId = "Reed";
+            var password = "ASDAT454fФЫВ";
+            var sha1 = SHA1.Create();
+            var passwordhash = Encoding.ASCII.GetString(sha1.ComputeHash(Encoding.ASCII.GetBytes(password)));
             var userhost = GetClientIp();
             var data = new {
                 user = "user",
-                passwordhash = "",
+                passwordhash = passwordhash,
                 host = userhost,
                 controlid = ControlId
             };
 
-            var result = DoRIPActionRequest(RIPADDRESS + "/SESSIONS", "POST", data);
-            Console.WriteLine(result);
+            //var result = DoRIPActionRequest(RIPADDRESS + "/SESSIONS", "POST", data);
+            //Console.WriteLine(result);
         }
 
         static string GetClientIp() =>
